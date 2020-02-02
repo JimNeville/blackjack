@@ -55,6 +55,6 @@ class Deck(object):
 		else:
 			for card in self.discarded:
 				self.cards.append(card)
-			print('********Shuffling Cards*************')
+			print('******** Shuffling Cards ********')
 			self.shuffle()
 			return self.cards.pop()
