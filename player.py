@@ -1,3 +1,5 @@
+import time
+
 # Create Player class
 class Player(object):
 	def __init__(self):
@@ -44,11 +46,14 @@ class Player(object):
 	def win_money(self, money, blackjack=False):
 		self.money += money
 		if blackjack == False:
-			print('Player wins ${}'.format(money))
+			print('\n**** Player wins ${} ****\n'.format(money))
+			time.sleep(2)
 		else:
-			print('Blackjack! Player wins ${}'.format(money))
+			print('\n**** Blackjack! Player wins ${} ****\n'.format(money))
+			time.sleep(2)
 
 
 	def lose_money(self, money):
 		self.money -= money 
-		print('\nDealer Wins. You lost ${}'.format(money))
+		print('\nDealer Wins. You lost ${}\n'.format(money))
+		time.sleep(2)

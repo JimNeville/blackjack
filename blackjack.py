@@ -1,6 +1,8 @@
 from player import Player 
 from dealer import Dealer 
 from carddeck import Card, Deck
+import os
+import time
 
 class Game(object):
 	def __init__(self):
@@ -11,6 +13,7 @@ class Game(object):
 
 
 	def seed_player(self):
+		os.system('clear')
 		input_check = False
 		while input_check == False:
 			print('Welcome to Blackjack. Please enter your starting money amount')
@@ -19,8 +22,10 @@ class Game(object):
 				money = float(money)
 				self.player.money = money
 				input_check = True
+				os.system('clear')
 			except ValueError as e:
-				print("Input error - Restarting Game...")
+				os.system('clear')
+				print("Input error - Plese input a starting amount greater than 0")
 
 
 	def place_bet(self):
@@ -32,14 +37,17 @@ class Game(object):
 			try:
 				bet = float(bet)
 			except ValueError as e:
+				os.system('clear')
 				print('You did not enter a valid bet amount')
 				continue
 
 			if self.player.money - bet < 0:
+				os.system('clear')
 				print('You do not have that much money')
 				continue
 			else:
-				print('Player bets ${}\n'.format(bet))
+				os.system('clear')
+				print('Player bets ${}'.format(bet))
 				input_check = True
 				return bet 
 
@@ -63,13 +71,18 @@ class Game(object):
 		self.player.total = self.player.show_hand()
 
 		if (self.player.total == 21) and (self.dealer.total == 21):
+			os.system('clear')
+			self.dealer.show_hand()
+			self.player.show_hand()
 			self.discard_all()
 			return 'push'
 		elif self.player.total == 21:
 			self.discard_all()
 			return 'blackjack'
 		elif self.dealer.total == 21:
+			os.system('clear')
 			self.dealer.show_hand()
+			self.player.show_hand()
 			self.discard_all()
 			return 'dealer' 
 		
@@ -77,19 +90,25 @@ class Game(object):
 			print('\nHit or Stand? - H/S')
 			action = input()
 			if action.lower() == 'h':
+				os.system('clear')
 				self.player.draw(self.deck)
 				self.dealer.show_hand(start=True)
 				self.player.total = self.player.show_hand()
 
 			elif action.lower() == 's':
+				os.system('clear')
 				self.dealer.show_hand()
+				self.player.show_hand()
 				break
 			else:
 				continue
 
 		while (self.dealer.total < 17) and (self.player.total <= 21):
+			os.system('clear')
 			self.dealer.draw(self.deck)
 			self.dealer.total = self.dealer.show_hand()
+			self.player.show_hand()
+			time.sleep(2)
 
 		self.discard_all()
 
