@@ -12,12 +12,6 @@ class Player(object):
 
 # Method for printing player's hand
 	def show_hand(self):
-		print("\n** Player's Hand **")
-		for card in self.hand:
-			card.show()
-
-
-	def show_total(self):
 		ace_indices = []
 		total = 0
 		index = 0
@@ -30,6 +24,10 @@ class Player(object):
 		while (total > 21) and (len(ace_indices) > 0):
 			ace_index = ace_indices.pop()
 			total -= 10
+
+		print("\n** Player's Hand **")
+		for card in self.hand:
+			card.show()
 
 		if total <= 21:
 			print('** Player has {} **'.format(total))

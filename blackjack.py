@@ -59,10 +59,8 @@ class Game(object):
 
 		# Function to play hand and return the winner - Player, Dealer, Push, or Blackjack if player is dealt blackjack
 		self.deal()
-		self.dealer.show_hand(start=True)
-		self.dealer.total = self.dealer.show_total(start=True)
-		self.player.show_hand()
-		self.player.total = self.player.show_total()
+		self.dealer.total = self.dealer.show_hand(start=True)
+		self.player.total = self.player.show_hand()
 
 		if (self.player.total == 21) and (self.dealer.total == 21):
 			self.discard_all()
@@ -72,7 +70,6 @@ class Game(object):
 			return 'blackjack'
 		elif self.dealer.total == 21:
 			self.dealer.show_hand()
-			self.dealer.show_total()
 			self.discard_all()
 			return 'dealer' 
 		
@@ -82,21 +79,17 @@ class Game(object):
 			if action.lower() == 'h':
 				self.player.draw(self.deck)
 				self.dealer.show_hand(start=True)
-				self.dealer.show_total(start=True)
-				self.player.show_hand()
-				self.player.total = self.player.show_total()
+				self.player.total = self.player.show_hand()
 
 			elif action.lower() == 's':
 				self.dealer.show_hand()
-				self.dealer.show_total()
 				break
 			else:
 				continue
 
 		while (self.dealer.total < 17) and (self.player.total <= 21):
 			self.dealer.draw(self.deck)
-			self.dealer.show_hand()
-			self.dealer.total = self.dealer.show_total()
+			self.dealer.total = self.dealer.show_hand()
 
 		self.discard_all()
 
