@@ -18,6 +18,10 @@ class Game(object):
 		while input_check == False:
 			print('Welcome to Blackjack. Please enter your starting money amount')
 			money = input()
+			
+			if money == 'q':
+				exit()
+
 			try:
 				money = float(money)
 				self.player.money = money
@@ -33,6 +37,9 @@ class Game(object):
 		while input_check == False:
 			print('Please enter your bet amount. You currently have ${}'.format(self.player.money))
 			bet = input()
+
+			if bet == 'q':
+				exit()
 
 			try:
 				bet = float(bet)
@@ -99,7 +106,10 @@ class Game(object):
 				os.system('clear')
 				self.dealer.show_hand()
 				self.player.show_hand()
+				time.sleep(1.5)
 				break
+			elif action.lower() == 'q':
+				exit()
 			else:
 				continue
 
@@ -136,7 +146,7 @@ class Game(object):
 			elif winner == 'blackjack':
 				self.player.win_money(bet*1.5, blackjack=True)
 			else:
-				print("It's a push...")
+				print("\nIt's a push...\n")
 				continue
 
 
