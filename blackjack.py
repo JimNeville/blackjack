@@ -69,27 +69,30 @@ class Game(object):
 		self.player.discard(self.discarded)
 		self.dealer.discard(self.discarded)
 
+
+	def show_status(self, start=False, clear=True):
+		if clear is True:
+			os.system('clear')
+		dealer_total = self.dealer.show_hand(start=start)
+		player_total = self.player.show_hand()
+		return dealer_total, player_total
+
 		
 	def play_hand(self, bet):
 
 		# Function to play hand and return the winner - Player, Dealer, Push, or Blackjack if player is dealt blackjack
 		self.deal()
-		self.dealer.total = self.dealer.show_hand(start=True)
-		self.player.total = self.player.show_hand()
+		self.dealer.total, self.player.total = self.show_status(start=True, clear = False)
 
 		if (self.player.total == 21) and (self.dealer.total == 21):
-			os.system('clear')
-			self.dealer.show_hand()
-			self.player.show_hand()
+			self.show_status()
 			self.discard_all()
 			return 'push', bet
 		elif self.player.total == 21:
 			self.discard_all()
 			return 'blackjack', bet
 		elif self.dealer.total == 21:
-			os.system('clear')
-			self.dealer.show_hand()
-			self.player.show_hand()
+			self.show_status()
 			self.discard_all()
 			return 'dealer', bet 
 		
@@ -99,31 +102,23 @@ class Game(object):
 				action = input()
 
 				if action.lower() == 'h':
-					os.system('clear')
 					self.player.draw(self.deck)
-					self.dealer.show_hand(start=True)
-					self.player.total = self.player.show_hand()
+					self.player.total = self.show_status(start=True)[1]
 
 				elif action.lower() == 's':
-					os.system('clear')
-					self.dealer.show_hand()
-					self.player.show_hand()
-					time.sleep(1.5)
+					self.show_status()
+					time.sleep(2)
 					break
 
 				elif action.lower() == 'd':
 					if self.player.money - (2*bet) >= 0:
 						bet = 2*bet
-						os.system('clear')
 						self.player.draw(self.deck)
-						self.dealer.show_hand(start=True)
-						self.player.total = self.player.show_hand()
-						time.sleep(1.5)
+						self.player.total = self.show_status(start=True)[1]
+						time.sleep(2)
 						break
 					else:
-						os.system('clear')
-						self.dealer.show_hand(start=True)
-						self.player.show_hand()
+						self.show_status(start=True)
 						print('\nYou do not have enough money to double down')
 				elif action.lower() == 'q':
 					exit()
@@ -134,16 +129,12 @@ class Game(object):
 			print('\nHit or Stand? - H/S')
 			action = input()
 			if action.lower() == 'h':
-				os.system('clear')
 				self.player.draw(self.deck)
-				self.dealer.show_hand(start=True)
-				self.player.total = self.player.show_hand()
+				self.player.total = self.show_status(start=True)[1]
 
 			elif action.lower() == 's':
-				os.system('clear')
-				self.dealer.show_hand()
-				self.player.show_hand()
-				time.sleep(1.5)
+				self.show_status()
+				time.sleep(2)
 				break
 			elif action.lower() == 'q':
 				exit()
@@ -151,10 +142,8 @@ class Game(object):
 				continue
 
 		while (self.dealer.total < 17) and (self.player.total <= 21):
-			os.system('clear')
 			self.dealer.draw(self.deck)
-			self.dealer.total = self.dealer.show_hand()
-			self.player.show_hand()
+			self.dealer.total = self.show_status()[0]
 			time.sleep(2)
 
 		self.discard_all()
