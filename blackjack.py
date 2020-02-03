@@ -18,7 +18,7 @@ class Game(object):
 		while input_check == False:
 			print('Welcome to Blackjack. Please enter your starting money amount')
 			money = input()
-			
+
 			if money == 'q':
 				exit()
 
@@ -70,7 +70,7 @@ class Game(object):
 		self.dealer.discard(self.discarded)
 
 		
-	def play_hand(self):
+	def play_hand(self, bet):
 
 		# Function to play hand and return the winner - Player, Dealer, Push, or Blackjack if player is dealt blackjack
 		self.deal()
@@ -82,18 +82,55 @@ class Game(object):
 			self.dealer.show_hand()
 			self.player.show_hand()
 			self.discard_all()
-			return 'push'
+			return 'push', bet
 		elif self.player.total == 21:
 			self.discard_all()
-			return 'blackjack'
+			return 'blackjack', bet
 		elif self.dealer.total == 21:
 			os.system('clear')
 			self.dealer.show_hand()
 			self.player.show_hand()
 			self.discard_all()
-			return 'dealer' 
+			return 'dealer', bet 
 		
 		while self.player.total < 21:
+			if len(self.player.hand) < 3:
+				print('\nHit, Stand or Double Down - H/S/D')
+				action = input()
+
+				if action.lower() == 'h':
+					os.system('clear')
+					self.player.draw(self.deck)
+					self.dealer.show_hand(start=True)
+					self.player.total = self.player.show_hand()
+
+				elif action.lower() == 's':
+					os.system('clear')
+					self.dealer.show_hand()
+					self.player.show_hand()
+					time.sleep(1.5)
+					break
+
+				elif action.lower() == 'd':
+					if self.player.money - (2*bet) >= 0:
+						bet = 2*bet
+						os.system('clear')
+						self.player.draw(self.deck)
+						self.dealer.show_hand(start=True)
+						self.player.total = self.player.show_hand()
+						time.sleep(1.5)
+						break
+					else:
+						os.system('clear')
+						self.dealer.show_hand(start=True)
+						self.player.show_hand()
+						print('\nYou do not have enough money to double down')
+				elif action.lower() == 'q':
+					exit()
+				else:
+					continue
+
+
 			print('\nHit or Stand? - H/S')
 			action = input()
 			if action.lower() == 'h':
@@ -123,22 +160,22 @@ class Game(object):
 		self.discard_all()
 
 		if self.dealer.total == self.player.total:
-			return 'push'
+			return 'push', bet
 		elif (self.dealer.total <= 21) and (self.dealer.total > self.player.total):
-			return 'dealer'
+			return 'dealer', bet
 		elif (self.player.total <= 21) and (self.player.total > self.dealer.total):
-			return 'player'
+			return 'player', bet
 		elif self.player.total > 21:
-			return 'dealer'
+			return 'dealer', bet
 		elif self.dealer.total > 21:
-			return 'player'
+			return 'player', bet
 
 
 	def play_game(self):
 		self.seed_player()
 		while self.player.money >= 1:
 			bet = self.place_bet()
-			winner = self.play_hand()
+			winner, bet = self.play_hand(bet)
 			if winner == 'player':
 				self.player.win_money(bet)
 			elif winner == 'dealer':

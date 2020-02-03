@@ -1,4 +1,5 @@
 import random as rand
+import time
 
 class Card(object):
 	def __init__(self, val, suit):
@@ -55,6 +56,7 @@ class Deck(object):
 		else:
 			for card in self.discarded:
 				self.cards.append(card)
-			print('******** Shuffling Cards ********')
+			print('\n******** Shuffling Cards ********')
+			time.sleep(2)
 			self.shuffle()
 			return self.cards.pop()
