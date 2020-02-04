@@ -43,7 +43,7 @@ class Player(object):
 			location.append(self.hand.pop())
 
 
-	def win_money(self, money, blackjack=False):
+	def win_money(self, money, insurance, blackjack=False):
 		self.money += money
 		if blackjack == False:
 			print('\n**** Player wins ${} ****\n'.format(money))
@@ -52,8 +52,28 @@ class Player(object):
 			print('\n**** Blackjack! Player wins ${} ****\n'.format(money))
 			time.sleep(2)
 
+		if insurance > 0:
+			print('\n**** Player wins ${} from Insurance bet ****'.format(insurance))
+			time.sleep(2)
+		elif insurance < 0:
+			print('\n**** Player loses ${} from Insurance bet ****'.format(-insurance))
+			time.sleep(2)
+		else:
+			pass
 
-	def lose_money(self, money):
+
+
+
+	def lose_money(self, money, insurance):
 		self.money -= money 
 		print('\nDealer Wins. You lost ${}\n'.format(money))
 		time.sleep(2)
+
+		if insurance > 0:
+			print('**** Player wins ${} from Insurance bet ****'.format(insurance))
+			time.sleep(2)
+		elif insurance < 0:
+			print('**** Player loses ${} from Insurance bet ****'.format(-insurance))
+			time.sleep(2)
+		else:
+			pass

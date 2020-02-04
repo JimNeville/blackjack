@@ -44,6 +44,7 @@ class Deck(object):
 
 # Method to randomly shuffle the deck
 	def shuffle(self):
+		#rand.seed(7) for Ace/9 Combo
 		for i in range(len(self.cards) - 1, 0, -1):
 			rand_int = rand.randint(0, i)
 			self.cards[rand_int], self.cards[i] = self.cards[i], self.cards[rand_int]

@@ -77,6 +77,42 @@ class Game(object):
 		player_total = self.player.show_hand()
 		return dealer_total, player_total
 
+	def offer_insurance(self):
+		input_check = False
+		insurance = 0
+		while input_check is False:
+			print('\nDealer Shows Ace. Would you like to buy Insurance? - Y/N')
+			ins = input()
+			if ins.lower() == 'y':
+				print('How much would you like to bet?')
+				insurance = input()
+				try:
+					insurance = float(insurance)
+					input_check = True
+					if self.dealer.total == 21:
+						return insurance
+					else:
+						return -insurance 
+				except ValueError as e:
+					self.show_status(start=True)
+					print('\nYou did not enter a valid bet amount')
+					continue
+
+			elif ins.lower() == 'n':
+				return insurance 
+			elif ins.lower() == 'q':
+				exit()
+			else:
+				self.show_status(start=True)
+				print('\nInvalid Input...')
+				continue
+
+
+
+	def split(self):
+		pass
+		#TODO: Add splitting flow
+
 		
 	def play_hand(self, bet):
 
@@ -84,19 +120,27 @@ class Game(object):
 		self.deal()
 		self.dealer.total, self.player.total = self.show_status(start=True, clear = False)
 
+		insurance = 0
+
+		if self.dealer.hand[1].name == 'Ace':
+			insurance = self.offer_insurance()
+
+		# Initial Blackjack check
 		if (self.player.total == 21) and (self.dealer.total == 21):
 			self.show_status()
 			self.discard_all()
-			return 'push', bet
+			return 'push', bet, insurance
 		elif self.player.total == 21:
 			self.discard_all()
-			return 'blackjack', bet
+			return 'blackjack', bet, insurance
 		elif self.dealer.total == 21:
 			self.show_status()
 			self.discard_all()
-			return 'dealer', bet 
+			return 'dealer', bet, insurance 
 		
 		while self.player.total < 21:
+			# Initial Player Action - Hit, Stand or Double Down
+			# TODO: Add Splitting
 			if len(self.player.hand) < 3:
 				print('\nHit, Stand or Double Down - H/S/D')
 				action = input()
@@ -116,6 +160,9 @@ class Game(object):
 						self.player.draw(self.deck)
 						self.player.total = self.show_status(start=True)[1]
 						time.sleep(2)
+						if self.player.total <= 21:
+							self.show_status()
+							time.sleep(2)
 						break
 					else:
 						self.show_status(start=True)
@@ -125,22 +172,24 @@ class Game(object):
 				else:
 					continue
 
-
-			print('\nHit or Stand? - H/S')
-			action = input()
-			if action.lower() == 'h':
-				self.player.draw(self.deck)
-				self.player.total = self.show_status(start=True)[1]
-
-			elif action.lower() == 's':
-				self.show_status()
-				time.sleep(2)
-				break
-			elif action.lower() == 'q':
-				exit()
+			# Second+ Player Action - Hit or Stand
 			else:
-				continue
+				print('\nHit or Stand? - H/S')
+				action = input()
+				if action.lower() == 'h':
+					self.player.draw(self.deck)
+					self.player.total = self.show_status(start=True)[1]
 
+				elif action.lower() == 's':
+					self.show_status()
+					time.sleep(2)
+					break
+				elif action.lower() == 'q':
+					exit()
+				else:
+					continue
+
+		# Draw dealer hand - stopping at 17
 		while (self.dealer.total < 17) and (self.player.total <= 21):
 			self.dealer.draw(self.deck)
 			self.dealer.total = self.show_status()[0]
@@ -148,29 +197,30 @@ class Game(object):
 
 		self.discard_all()
 
+		# Declare winner of hand
 		if self.dealer.total == self.player.total:
-			return 'push', bet
+			return 'push', bet, insurance
 		elif (self.dealer.total <= 21) and (self.dealer.total > self.player.total):
-			return 'dealer', bet
+			return 'dealer', bet, insurance
 		elif (self.player.total <= 21) and (self.player.total > self.dealer.total):
-			return 'player', bet
+			return 'player', bet, insurance
 		elif self.player.total > 21:
-			return 'dealer', bet
+			return 'dealer', bet, insurance
 		elif self.dealer.total > 21:
-			return 'player', bet
+			return 'player', bet, insurance
 
 
 	def play_game(self):
 		self.seed_player()
 		while self.player.money >= 1:
 			bet = self.place_bet()
-			winner, bet = self.play_hand(bet)
+			winner, bet, insurance = self.play_hand(bet)
 			if winner == 'player':
-				self.player.win_money(bet)
+				self.player.win_money(bet, insurance=insurance)
 			elif winner == 'dealer':
-				self.player.lose_money(bet)
+				self.player.lose_money(bet, insurance=insurance)
 			elif winner == 'blackjack':
-				self.player.win_money(bet*1.5, blackjack=True)
+				self.player.win_money(bet*1.5, insurance=insurance, blackjack=True)
 			else:
 				print("\nIt's a push...\n")
 				continue
