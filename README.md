@@ -1,2 +1,2 @@
 # blackjack
-In-terminal playable blackjack created using Python
+Bash terminal playable blackjack created using Python
