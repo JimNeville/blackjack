@@ -77,6 +77,7 @@ class Game(object):
 		player_total = self.player.show_hand()
 		return dealer_total, player_total
 
+
 	def offer_insurance(self):
 		input_check = False
 		insurance = 0
@@ -108,39 +109,9 @@ class Game(object):
 				continue
 
 
-
-	def split(self):
-		pass
-		#TODO: Add splitting flow
-
-		
-	def play_hand(self, bet):
-
-		# Function to play hand and return the winner - Player, Dealer, Push, or Blackjack if player is dealt blackjack
-		self.deal()
-		self.dealer.total, self.player.total = self.show_status(start=True, clear = False)
-
-		insurance = 0
-
-		if self.dealer.hand[1].name == 'Ace':
-			insurance = self.offer_insurance()
-
-		# Initial Blackjack check
-		if (self.player.total == 21) and (self.dealer.total == 21):
-			self.show_status()
-			self.discard_all()
-			return 'push', bet, insurance
-		elif self.player.total == 21:
-			self.discard_all()
-			return 'blackjack', bet, insurance
-		elif self.dealer.total == 21:
-			self.show_status()
-			self.discard_all()
-			return 'dealer', bet, insurance 
-		
+	def player_action(self):
 		while self.player.total < 21:
 			# Initial Player Action - Hit, Stand or Double Down
-			# TODO: Add Splitting
 			if len(self.player.hand) < 3:
 				print('\nHit, Stand or Double Down - H/S/D')
 				action = input()
@@ -187,7 +158,50 @@ class Game(object):
 				elif action.lower() == 'q':
 					exit()
 				else:
-					continue
+					continue		
+
+
+	def split(self):
+		pass
+		#TODO: Add splitting flow
+		# Steps:
+		# 1. If player is dealt identically valued cards, ask if they would like to split - Need to modify player_action()
+		# 		- Check that player has money to do so
+		#		- Double bet
+		# 2. Instantiate second player
+		# 3. Deal second card to player 1 and player 2
+		# 4. Play through both players' hands
+		# 5. Modify discard_all() to check for second player and discard all players cards
+		# 6. Compare both player totals to dealer's total
+		# 6. Declare winner for each player hand - Need to modify declare winner section below to account for split hands
+		# 7. 
+
+		
+	def play_hand(self, bet):
+
+		# Function to play hand and return the winner - Player, Dealer, Push, or Blackjack if player is dealt blackjack
+		self.deal()
+		self.dealer.total, self.player.total = self.show_status(start=True, clear = False)
+
+		insurance = 0
+
+		if self.dealer.hand[1].name == 'Ace':
+			insurance = self.offer_insurance()
+
+		# Initial Blackjack check
+		if (self.player.total == 21) and (self.dealer.total == 21):
+			self.show_status()
+			self.discard_all()
+			return 'push', bet, insurance
+		elif self.player.total == 21:
+			self.discard_all()
+			return 'blackjack', bet, insurance
+		elif self.dealer.total == 21:
+			self.show_status()
+			self.discard_all()
+			return 'dealer', bet, insurance 
+
+		self.player_action()
 
 		# Draw dealer hand - stopping at 17
 		while (self.dealer.total < 17) and (self.player.total <= 21):
